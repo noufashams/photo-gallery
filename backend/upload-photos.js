@@ -53,11 +53,11 @@ async function uploadFile(filePath, albumName) {
     }
 
     const result = await cloudinary.uploader.upload(uploadTarget, {
-      public_id: publicId, // Enforce matching public ID
+      folder: `wedding-gallery/${albumName}`,
+      public_id: fileKey,
       overwrite: false,
       resource_type: 'image',
     });
-
     console.log(`✓ Uploaded NEW: [${albumName}] ${fileName}`);
     return result;
   } catch (error) {
