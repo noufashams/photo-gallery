@@ -32,7 +32,7 @@ export default function Home() {
 
   // Fetch photos from backend
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://photo-gallery-iw5a.onrender.com';
 
     fetch(`${apiUrl}/api/photos`)
       .then((res) => {
