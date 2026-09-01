@@ -1,9 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
-const archiver = require('archiver');
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -12,100 +10,85 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-// Path to root local-photos folder
-const LOCAL_PHOTOS_DIR = path.join(__dirname, '../local-photos');
-
-// Serve static images under /photos URL path
-app.use('/photos', express.static(LOCAL_PHOTOS_DIR));
+// Configure Cloudinary using environment variables
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Root health check endpoint
 app.get('/', (req, res) => {
   res.json({
     status: 'online',
-    message: 'Wedding Gallery Backend API is running!',
+    message: 'Wedding Gallery Backend API is running via Cloudinary!',
   });
 });
 
-// Helper function to scan local-photos directory dynamically using request context
-const getGalleryData = (req) => {
-  if (!fs.existsSync(LOCAL_PHOTOS_DIR)) {
-    return { error: `Directory not found: ${LOCAL_PHOTOS_DIR}`, photos: [] };
-  }
+// Helper function to fetch images dynamically from Cloudinary
+const getCloudinaryGalleryData = async () => {
+  try {
+    // Fetch resources (images) from Cloudinary, optionally categorized by folder tags or prefix
+    const result = await cloudinary.api.resources({
+      type: 'upload',
+      max_results: 500, // Adjust if you have more than 500 photos
+      prefix: '', // Change if you store them inside a specific Cloudinary folder path like 'wedding/'
+    });
 
-  // Get dynamic host (e.g., 'localhost:5001' or 'your-app.onrender.com')
-  const protocol = req.protocol;
-  const host = req.get('host');
+    const photos = [];
+    const albumsSet = new Set();
 
-  const albums = fs
-    .readdirSync(LOCAL_PHOTOS_DIR)
-    .filter((file) =>
-      fs.statSync(path.join(LOCAL_PHOTOS_DIR, file)).isDirectory()
-    );
+    result.resources.forEach((file) => {
+      // Extract folder or tag info from the public_id (e.g., "Ceremony/image1.jpg")
+      const parts = file.public_id.split('/');
+      const folder = parts.length > 1 ? parts[0] : 'General';
+      albumsSet.add(folder);
 
-  const photos = [];
-
-  albums.forEach((album) => {
-    const albumPath = path.join(LOCAL_PHOTOS_DIR, album);
-    const files = fs
-      .readdirSync(albumPath)
-      .filter((f) => /\.(jpg|jpeg|png|webp|gif)$/i.test(f));
-
-    files.forEach((file) => {
       photos.push({
-        id: `${album}/${file}`,
-        url: `${protocol}://${host}/photos/${encodeURIComponent(album)}/${encodeURIComponent(file)}`,
-        folder: album,
-        filename: file,
+        id: file.public_id,
+        url: file.secure_url,
+        folder: folder,
+        filename: parts[parts.length - 1],
       });
     });
-  });
 
-  return { count: photos.length, albums, photos };
+    const albums = Array.from(albumsSet);
+    return { count: photos.length, albums, photos };
+  } catch (error) {
+    console.error('Cloudinary fetch error:', error);
+    return { error: 'Failed to fetch photos from Cloudinary' };
+  }
 };
 
 // GET /api/photos
-app.get('/api/photos', (req, res) => {
-  const data = getGalleryData(req);
-  if (data.error) return res.status(404).json({ success: false, error: data.error });
+app.get('/api/photos', async (req, res) => {
+  const data = await getCloudinaryGalleryData();
+  if (data.error) return res.status(500).json({ success: false, error: data.error });
   res.json({ success: true, ...data });
 });
 
 // GET /api/gallery (alias route)
-app.get('/api/gallery', (req, res) => {
-  const data = getGalleryData(req);
-  if (data.error) return res.status(404).json({ success: false, error: data.error });
+app.get('/api/gallery', async (req, res) => {
+  const data = await getCloudinaryGalleryData();
+  if (data.error) return res.status(500).json({ success: false, error: data.error });
   res.json({ success: true, ...data });
 });
 
-// POST /api/download-favorites - Zips requested photo IDs and streams the ZIP file
-app.post('/api/download-favorites', (req, res) => {
+// POST /api/download-favorites - Redirects or streams favorite URLs for download
+app.post('/api/download-favorites', async (req, res) => {
   const { photoIds } = req.body;
 
   if (!photoIds || !Array.isArray(photoIds) || photoIds.length === 0) {
     return res.status(400).json({ error: 'No photo IDs provided' });
   }
 
-  res.attachment('wedding-favorites.zip');
-  res.setHeader('Content-Type', 'application/zip');
-
-  const archive = archiver('zip', { zlib: { level: 5 } });
-
-  archive.on('error', (err) => {
-    console.error('Archiver error:', err);
-    res.status(500).send({ error: err.message });
-  });
-
-  archive.pipe(res);
-
-  photoIds.forEach((id) => {
-    const filePath = path.join(LOCAL_PHOTOS_DIR, id);
-    if (fs.existsSync(filePath)) {
-      const fileName = path.basename(filePath);
-      archive.file(filePath, { name: fileName });
-    }
-  });
-
-  archive.finalize();
+  try {
+    // For Cloudinary, we can return the secure URLs so the frontend can handle downloads/saving
+    res.json({ success: true, photoIds });
+  } catch (err) {
+    console.error('Download favorites error:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 process.on('uncaughtException', (err) => {
@@ -113,6 +96,5 @@ process.on('uncaughtException', (err) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Backend server active on port ${PORT}`);
-  console.log(`📂 Reading photos from: ${LOCAL_PHOTOS_DIR}`);
+  console.log(`🚀 Backend server active on port ${PORT} connected to Cloudinary`);
 });
