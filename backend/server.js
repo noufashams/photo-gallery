@@ -75,6 +75,10 @@ app.get('/api/gallery', async (req, res) => {
 });
 
 // POST /api/download-favorites - Redirects or streams favorite URLs for download
+const https = require('https');
+const archiver = require('archiver');
+
+// POST /api/download-favorites - Streams selected photos as a ZIP file
 app.post('/api/download-favorites', async (req, res) => {
   const { photoIds } = req.body;
 
@@ -83,11 +87,43 @@ app.post('/api/download-favorites', async (req, res) => {
   }
 
   try {
-    // For Cloudinary, we can return the secure URLs so the frontend can handle downloads/saving
-    res.json({ success: true, photoIds });
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename=wedding-favorites.zip');
+
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    archive.pipe(res);
+
+    // Fetch resources from Cloudinary to get their secure URLs
+    const result = await cloudinary.api.resources({
+      type: 'upload',
+      max_results: 500,
+    });
+
+    const photoMap = new Map();
+    result.resources.forEach((file) => {
+      photoMap.set(file.public_id, file.secure_url);
+    });
+
+    for (const id of photoIds) {
+      const url = photoMap.get(id);
+      if (url) {
+        const filename = id.split('/').pop() || 'photo.jpg';
+        await new Promise((resolve, reject) => {
+          https.get(url, (imageStream) => {
+            archive.append(imageStream, { name: filename });
+            imageStream.on('end', resolve);
+            imageStream.on('error', reject);
+          });
+        });
+      }
+    }
+
+    await archive.finalize();
   } catch (err) {
-    console.error('Download favorites error:', err);
-    res.status(500).json({ error: err.message });
+    console.error('Download favorites ZIP error:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Failed to generate ZIP file' });
+    }
   }
 });
 
