@@ -129,19 +129,19 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#FBF9F5] text-stone-800">
-        <p className="text-sm tracking-widest uppercase font-medium animate-pulse text-amber-700">Loading Gallery...</p>
+        <p className="text-xs tracking-[0.25em] uppercase font-light animate-pulse text-stone-500">Loading Gallery...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FBF9F5] text-rose-700 p-6 text-center">
-        <h2 className="text-2xl font-bold mb-2">Connection Error</h2>
-        <p className="max-w-md text-stone-600">{error}</p>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FBF9F5] text-stone-900 p-6 text-center">
+        <h2 className="text-xl font-serif font-light mb-2">Connection Error</h2>
+        <p className="max-w-md text-stone-500 text-sm">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-6 px-4 py-2 bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition"
+          className="mt-6 px-6 py-2.5 bg-stone-900 text-white text-xs tracking-widest uppercase rounded-none hover:bg-stone-800 transition"
         >
           Retry Connection
         </button>
@@ -174,15 +174,15 @@ export default function Home() {
       <div className="fixed top-6 right-6 z-40">
         <button
           onClick={() => setActiveTab('Favorites')}
-          className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center gap-2 backdrop-blur-md shadow-md border ${
+          className={`px-5 py-2.5 rounded-none text-xs font-medium tracking-widest uppercase transition-all flex items-center gap-2 backdrop-blur-md shadow-sm border ${
             activeTab === 'Favorites'
-              ? 'bg-rose-600 text-white shadow-rose-600/20 border-rose-500'
-              : 'bg-[#FBF9F5]/90 text-rose-600 hover:bg-stone-100 border-stone-200'
+              ? 'bg-stone-900 text-white border-stone-900'
+              : 'bg-[#FBF9F5]/90 text-stone-800 hover:bg-stone-100 border-stone-300'
           }`}
         >
-          <span>❤️</span>
+          <span className="text-stone-400">♥</span>
           <span>Favorites</span>
-          <span className="ml-1 bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-[10px] font-bold">
+          <span className="ml-1 bg-stone-200 text-stone-900 px-2 py-0.5 rounded-none text-[10px] font-semibold">
             {favorites.length}
           </span>
         </button>
@@ -195,29 +195,28 @@ export default function Home() {
           <img
             src="/cover-bg.jpg"
             alt="Wedding Cover"
-            className="w-full h-full object-cover object-center filter brightness-90"
+            className="w-full h-full object-cover object-center"
           />
           {/* Dark overlay to keep text readable */}
-          <div className="absolute inset-0 bg-stone-950/40 backdrop-blur-[2px]"></div>
+          <div className="absolute inset-0 bg-stone-950/40"></div>
         </div>
 
         {/* Content */}
         <div className="relative z-10 max-w-4xl space-y-5 text-white">
-          <p className="text-xs uppercase tracking-[0.3em] text-amber-300 font-semibold drop-shadow-md">
+          <p className="text-xs uppercase tracking-[0.3em] text-stone-300 font-light drop-shadow-md">
             Together Forever
           </p>
           
           {/* Groom & Bride Names */}
           <h1 className="text-5xl md:text-7xl font-serif font-light tracking-wide drop-shadow-lg">
-            YASEEN <span className="text-amber-300 italic font-normal">&amp;</span> NADA
+            YASEEN <span className="text-stone-300 italic font-normal">&amp;</span> NADA
           </h1>
           
-          <div className="flex items-center justify-center gap-4 text-stone-200 text-sm">
-            <span className="h-[1px] w-12 bg-white/50"></span>
-            <span className="uppercase tracking-widest text-xs font-medium drop-shadow-md">Wedding Celebration</span>
-            <span className="h-[1px] w-12 bg-white/50"></span>
+          <div className="flex items-center justify-center gap-4 text-stone-300 text-sm">
+            <span className="h-[1px] w-12 bg-white/40"></span>
+            <span className="uppercase tracking-[0.2em] text-[11px] font-light drop-shadow-md">Wedding Celebration</span>
+            <span className="h-[1px] w-12 bg-white/40"></span>
           </div>
-
         </div>
       </section>
 
@@ -229,10 +228,10 @@ export default function Home() {
             <button
               key={album}
               onClick={() => setActiveTab(album)}
-              className={`px-6 py-2.5 rounded-full text-xs font-medium tracking-wider uppercase transition-all ${
+              className={`px-6 py-2.5 rounded-none text-xs font-light tracking-[0.15em] uppercase transition-all ${
                 activeTab === album
-                  ? 'bg-amber-700 text-white shadow-md font-semibold'
-                  : 'bg-[#F4EFEA] text-stone-700 hover:bg-stone-200 hover:text-stone-900 border border-stone-200/60 shadow-sm'
+                  ? 'bg-stone-900 text-white font-normal shadow-sm'
+                  : 'bg-stone-100/80 text-stone-600 hover:bg-stone-200 hover:text-stone-900 border border-stone-200'
               }`}
             >
               {album} 
@@ -246,9 +245,9 @@ export default function Home() {
             <button
               onClick={handleDownloadAllFavorites}
               disabled={downloadingFavs}
-              className="px-8 py-3 bg-rose-600 hover:bg-rose-700 text-white text-xs tracking-widest uppercase font-semibold rounded-full shadow-lg shadow-rose-200 transition flex items-center gap-3 disabled:opacity-50"
+              className="px-8 py-3 bg-stone-900 hover:bg-stone-800 text-white text-xs tracking-[0.2em] uppercase font-light rounded-none shadow-sm transition flex items-center gap-3 disabled:opacity-50"
             >
-              {downloadingFavs ? '📦 Packing ZIP File...' : `⬇ Download All Favorites (${favorites.length})`}
+              {downloadingFavs ? 'Packing ZIP File...' : `Download All Favorites (${favorites.length})`}
             </button>
           </div>
         )}
@@ -268,22 +267,22 @@ export default function Home() {
                 <div
                   key={photo.id}
                   onClick={() => setSelectedPhotoIndex(index)}
-                  className="group relative cursor-pointer overflow-hidden rounded-xl bg-stone-200 aspect-[4/5] shadow-sm hover:shadow-xl border border-stone-200/80 transition-all duration-300"
+                  className="group relative cursor-pointer overflow-hidden rounded-none bg-stone-200 aspect-[4/5] shadow-sm hover:shadow-md border border-stone-200 transition-all duration-300"
                 >
                   <img
                     src={photo.url}
                     alt={photo.filename}
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
                   {/* Overlay Controls */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-stone-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-between">
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 via-transparent to-stone-950/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-between">
                     <div className="flex justify-end">
                       <button
                         onClick={(e) => toggleFavorite(photo.id, e)}
-                        className={`p-2.5 rounded-full backdrop-blur-md transition ${
-                          isFav ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-800 hover:bg-white'
+                        className={`p-2.5 rounded-none backdrop-blur-md transition ${
+                          isFav ? 'bg-stone-900 text-white' : 'bg-white/90 text-stone-800 hover:bg-white'
                         }`}
                         title={isFav ? 'Remove from favorites' : 'Add to favorites'}
                       >
@@ -291,13 +290,13 @@ export default function Home() {
                       </button>
                     </div>
                     <div className="flex justify-between items-center text-xs text-white">
-                      <span className="truncate pr-2 font-mono text-[10px] text-stone-300">{photo.filename}</span>
+                      <span className="truncate pr-2 font-mono text-[10px] text-stone-300 font-light">{photo.filename}</span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDownloadSingle(photo.url, photo.filename);
                         }}
-                        className="px-3 py-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded text-[11px] tracking-wider uppercase transition border border-white/20"
+                        className="px-3 py-1 bg-stone-900/80 hover:bg-stone-900 backdrop-blur-md text-white rounded-none text-[10px] tracking-widest uppercase transition border border-stone-700"
                       >
                         Save
                       </button>
@@ -315,7 +314,7 @@ export default function Home() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/90 backdrop-blur-md p-4">
           <button
             onClick={() => setSelectedPhotoIndex(null)}
-            className="absolute top-6 right-6 z-10 p-3 text-stone-400 hover:text-white text-2xl font-light transition"
+            className="absolute top-6 right-6 z-10 p-3 text-stone-400 hover:text-white text-xl font-light transition"
           >
             ✕
           </button>
@@ -323,7 +322,7 @@ export default function Home() {
           {selectedPhotoIndex > 0 && (
             <button
               onClick={handlePrev}
-              className="absolute left-6 z-10 p-3 bg-stone-900/60 hover:bg-stone-800 text-white rounded-full transition border border-stone-700"
+              className="absolute left-6 z-10 p-3 bg-stone-900/60 hover:bg-stone-900 text-white rounded-none transition border border-stone-800"
             >
               ◀
             </button>
@@ -332,7 +331,7 @@ export default function Home() {
           {selectedPhotoIndex < currentPhotos.length - 1 && (
             <button
               onClick={handleNext}
-              className="absolute right-6 z-10 p-3 bg-stone-900/60 hover:bg-stone-800 text-white rounded-full transition border border-stone-700"
+              className="absolute right-6 z-10 p-3 bg-stone-900/60 hover:bg-stone-900 text-white rounded-none transition border border-stone-800"
             >
               ▶
             </button>
@@ -342,11 +341,11 @@ export default function Home() {
             <img
               src={selectedPhoto.url}
               alt={selectedPhoto.filename}
-              className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl"
+              className="max-w-full max-h-[75vh] object-contain rounded-none shadow-2xl"
             />
 
-            <div className="mt-6 flex items-center gap-6 bg-stone-900/95 border border-stone-800 backdrop-blur-md px-6 py-3 rounded-full shadow-2xl text-white">
-              <span className="text-xs tracking-wider uppercase text-stone-400">
+            <div className="mt-6 flex items-center gap-6 bg-stone-900/95 border border-stone-800 backdrop-blur-md px-6 py-3 rounded-none shadow-2xl text-white">
+              <span className="text-[11px] tracking-[0.15em] uppercase text-stone-400 font-light">
                 {selectedPhoto.folder} • {selectedPhotoIndex + 1} / {currentPhotos.length}
               </span>
 
@@ -354,8 +353,8 @@ export default function Home() {
 
               <button
                 onClick={() => toggleFavorite(selectedPhoto.id)}
-                className={`flex items-center gap-2 text-xs font-semibold tracking-wider uppercase transition ${
-                  favorites.includes(selectedPhoto.id) ? 'text-rose-500' : 'text-stone-300 hover:text-white'
+                className={`flex items-center gap-2 text-[11px] font-light tracking-[0.15em] uppercase transition ${
+                  favorites.includes(selectedPhoto.id) ? 'text-stone-200' : 'text-stone-400 hover:text-white'
                 }`}
               >
                 ♥ {favorites.includes(selectedPhoto.id) ? 'Favorited' : 'Favorite'}
@@ -365,9 +364,9 @@ export default function Home() {
 
               <button
                 onClick={() => handleDownloadSingle(selectedPhoto.url, selectedPhoto.filename)}
-                className="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-amber-400 hover:text-amber-300 transition"
+                className="flex items-center gap-2 text-[11px] font-light tracking-[0.15em] uppercase text-stone-300 hover:text-white transition"
               >
-                ⬇ Save Image
+                Download Image
               </button>
             </div>
           </div>
