@@ -28,21 +28,26 @@ app.get('/', (req, res) => {
 // Helper function to fetch images dynamically from Cloudinary
 const getCloudinaryGalleryData = async () => {
   try {
-    const result = await cloudinary.api.resources({
-      type: 'upload',
-      max_results: 500,
-      prefix: 'wedding-gallery/', // Target your main nested folder
-    });
+    let resources = [];
+    let nextCursor = null;
+
+    // Loop through pagination to fetch all photos if total exceeds 500
+    do {
+      const result = await cloudinary.api.resources({
+        type: 'upload',
+        max_results: 500,
+        prefix: 'wedding-gallery/',
+        next_cursor: nextCursor,
+      });
+      resources = resources.concat(result.resources);
+      nextCursor = result.next_cursor;
+    } while (nextCursor);
 
     const photos = [];
     const albumsSet = new Set();
 
-    result.resources.forEach((file) => {
-      // public_id looks like: wedding-gallery/nikkah/wdww (80)
+    resources.forEach((file) => {
       const parts = file.public_id.split('/');
-      
-      // parts[0] = 'wedding-gallery'
-      // parts[1] = 'nikkah' (the actual album name)
       const folder = parts.length > 2 ? parts[1] : 'General';
       albumsSet.add(folder);
 
