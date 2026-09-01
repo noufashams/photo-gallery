@@ -170,19 +170,28 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#FBF9F5] text-stone-900 select-none relative">
-      {/* Top Right Floating Favorites Button */}
+      {/* Google Fonts Import for Aesthetic Script */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet" />
+
+      {/* Top Right Floating Aesthetic Favorites Button */}
       <div className="fixed top-6 right-6 z-40">
         <button
           onClick={() => setActiveTab('Favorites')}
-          className={`px-5 py-2.5 rounded-none text-xs font-medium tracking-widest uppercase transition-all flex items-center gap-2 backdrop-blur-md shadow-sm border ${
+          className={`px-5 py-2.5 rounded-full text-[11px] font-light tracking-[0.2em] uppercase transition-all duration-300 flex items-center gap-2.5 backdrop-blur-md shadow-sm border ${
             activeTab === 'Favorites'
-              ? 'bg-stone-900 text-white border-stone-900'
-              : 'bg-[#FBF9F5]/90 text-stone-800 hover:bg-stone-100 border-stone-300'
+              ? 'bg-stone-900 text-white border-stone-900 shadow-md'
+              : 'bg-white/70 text-stone-700 hover:bg-white hover:border-stone-400 border-stone-200/80'
           }`}
         >
-          <span className="text-stone-400">♥</span>
-          <span>Favorites</span>
-          <span className="ml-1 bg-stone-200 text-stone-900 px-2 py-0.5 rounded-none text-[10px] font-semibold">
+          <span className={`text-xs transition-colors ${activeTab === 'Favorites' ? 'text-rose-300' : 'text-stone-400'}`}>
+            ♥
+          </span>
+          <span className="font-normal">Favorites</span>
+          <span className={`ml-0.5 px-2 py-0.5 rounded-full text-[10px] tracking-normal ${
+            activeTab === 'Favorites' ? 'bg-stone-800 text-stone-200' : 'bg-stone-100 text-stone-600'
+          }`}>
             {favorites.length}
           </span>
         </button>
@@ -207,9 +216,9 @@ export default function Home() {
             Together Forever
           </p>
           
-          {/* Groom & Bride Names */}
-          <h1 className="text-5xl md:text-7xl font-serif font-light tracking-wide drop-shadow-lg">
-            YASEEN <span className="text-stone-300 italic font-normal">&amp;</span> NADA
+          {/* Groom & Bride Names with Aesthetic Font */}
+          <h1 className="text-6xl md:text-8xl tracking-wide drop-shadow-lg" style={{ fontFamily: "'Dancing Script', cursive" }}>
+            Yaseen <span className="text-stone-300 italic font-normal">&amp;</span> Nada
           </h1>
           
           <div className="flex items-center justify-center gap-4 text-stone-300 text-sm">
