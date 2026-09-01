@@ -86,6 +86,7 @@ const https = require('https');
 const archiver = require('archiver');
 
 // POST /api/download-favorites - Streams selected photos as a ZIP file
+// POST /api/download-favorites - Streams selected photos as a ZIP file
 app.post('/api/download-favorites', async (req, res) => {
   const { photoIds } = req.body;
 
@@ -100,14 +101,23 @@ app.post('/api/download-favorites', async (req, res) => {
     const archive = archiver('zip', { zlib: { level: 9 } });
     archive.pipe(res);
 
-    // Fetch resources from Cloudinary to get their secure URLs
-    const result = await cloudinary.api.resources({
-      type: 'upload',
-      max_results: 500,
-    });
+    // Fetch ALL resources from Cloudinary using pagination (bypassing the 500 limit)
+    let resources = [];
+    let nextCursor = null;
+
+    do {
+      const result = await cloudinary.api.resources({
+        type: 'upload',
+        max_results: 500,
+        prefix: 'wedding-gallery/',
+        next_cursor: nextCursor,
+      });
+      resources = resources.concat(result.resources);
+      nextCursor = result.next_cursor;
+    } while (nextCursor);
 
     const photoMap = new Map();
-    result.resources.forEach((file) => {
+    resources.forEach((file) => {
       photoMap.set(file.public_id, file.secure_url);
     });
 
@@ -115,11 +125,17 @@ app.post('/api/download-favorites', async (req, res) => {
       const url = photoMap.get(id);
       if (url) {
         const filename = id.split('/').pop() || 'photo.jpg';
-        await new Promise((resolve, reject) => {
+        await new Promise((resolve) => {
           https.get(url, (imageStream) => {
             archive.append(imageStream, { name: filename });
             imageStream.on('end', resolve);
-            imageStream.on('error', reject);
+            imageStream.on('error', (err) => {
+              console.error(`Stream error for ${filename}:`, err);
+              resolve(); // Resolve anyway so one broken image doesn't crash the whole ZIP
+            });
+          }).on('error', (err) => {
+            console.error(`Network error for ${filename}:`, err);
+            resolve();
           });
         });
       }
