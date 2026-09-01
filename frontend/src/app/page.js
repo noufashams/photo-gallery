@@ -52,7 +52,7 @@ export default function Home() {
       })
       .catch((err) => {
         console.error('Fetch error:', err);
-        setError('Could not connect to backend server. Make sure node server.js is running on port 5001.');
+        setError('Could not connect to backend server.');
         setLoading(false);
       });
   }, []);
@@ -100,7 +100,7 @@ export default function Home() {
     setDownloadingFavs(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://photo-gallery-iw5a.onrender.com';
       const response = await fetch(`${apiUrl}/api/download-favorites`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
