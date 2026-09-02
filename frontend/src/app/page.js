@@ -242,9 +242,9 @@ export default function Home() {
                   setActiveTab(data.albums[0]);
                 }
               }}
-              className="px-8 py-2.5 bg-transparent text-stone-900 text-xs font-light tracking-[0.15em] uppercase rounded-none border border-stone-400 hover:bg-stone-100/50 transition shadow-sm"
+              className="px-8 py-2.5 bg-transparent text-stone-900 text-xs font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm"
             >
-              ← Back
+              Back
             </button>
           ) : (
             data.albums.map((album) => (
@@ -275,25 +275,30 @@ export default function Home() {
           </div>
         )}
 
-        {/* Favorites Title Header */}
+        {/* Aesthetic Favorites Title Header */}
         {activeTab === 'Favorites' && (
-          <div className="text-center mb-10 space-y-1">
-            <h2 className="text-2xl md:text-3xl font-light tracking-[0.2em] uppercase text-stone-800">
-              Favorites
-            </h2>
-            <p className="text-[11px] tracking-[0.15em] uppercase text-stone-400 font-light">
-              Saved Wedding Memories
+          <div className="text-center mb-12 space-y-3">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-stone-400 font-light">
+              Curated Collection
             </p>
+            <h2 className="text-4xl md:text-5xl font-light tracking-wide text-stone-900" style={{ fontFamily: "'Dancing Script', cursive" }}>
+              Your Favorite Moments
+            </h2>
+            <div className="flex items-center justify-center gap-4 text-stone-400 text-xs pt-1">
+              <span className="h-[1px] w-8 bg-stone-300"></span>
+              <span className="uppercase tracking-[0.2em] text-[10px] font-light">Saved Memories</span>
+              <span className="h-[1px] w-8 bg-stone-300"></span>
+            </div>
           </div>
         )}
 
         {/* Download All Favorites Button */}
         {activeTab === 'Favorites' && favorites.length > 0 && (
-          <div className="flex justify-center mb-10">
+          <div className="flex justify-center mb-12">
             <button
               onClick={handleDownloadAllFavorites}
               disabled={downloadingFavs}
-              className="px-8 py-3 bg-transparent hover:bg-stone-100/50 text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-400 shadow-sm transition flex items-center gap-3 disabled:opacity-50"
+              className="px-8 py-3 bg-transparent hover:bg-stone-900/5 text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-300 hover:border-stone-900 shadow-sm transition-all duration-300 flex items-center gap-3 disabled:opacity-50"
             >
               {downloadingFavs ? 'Packing ZIP File...' : `Download All (${favorites.length})`}
             </button>
@@ -302,10 +307,16 @@ export default function Home() {
 
         {/* Photo Grid */}
         {currentPhotos.length === 0 ? (
-          <div className="text-center py-24 text-stone-400 font-light text-sm tracking-wide">
-            {activeTab === 'Favorites'
-              ? 'No favorite photos added yet. Click the heart icon on any photo to save it here.'
-              : 'No photos found in this category.'}
+          <div className="text-center py-32 space-y-4">
+            <span className="text-3xl text-stone-300">♥</span>
+            <p className="text-stone-500 font-light text-sm tracking-widest uppercase">
+              {activeTab === 'Favorites' ? 'No favorite photos added yet' : 'No photos found in this category.'}
+            </p>
+            {activeTab === 'Favorites' && (
+              <p className="text-stone-400 text-xs font-light max-w-sm mx-auto">
+                Tap the heart icon on any photograph while browsing the gallery to curate your personal collection.
+              </p>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
