@@ -13,14 +13,16 @@ export default function Home() {
   const [favorites, setFavorites] = useState([]);
   const [downloadingFavs, setDownloadingFavs] = useState(false);
 
-  // Load Favorites from LocalStorage on mount
+  // Load Favorites from LocalStorage on mount and sanitize against loaded photos
   useEffect(() => {
     const saved = localStorage.getItem('wedding_gallery_favs');
     if (saved) {
       try {
-        setFavorites(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setFavorites(Array.isArray(parsed) ? parsed : []);
       } catch (e) {
         console.error('Failed to parse favorites:', e);
+        setFavorites([]);
       }
     }
   }, []);
@@ -30,7 +32,7 @@ export default function Home() {
     localStorage.setItem('wedding_gallery_favs', JSON.stringify(favorites));
   }, [favorites]);
 
-  // Fetch photos from backend
+  // Fetch photos from backend and filter out invalid/stale favorite IDs
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://photo-gallery-iw5a.onrender.com';
 
@@ -45,6 +47,10 @@ export default function Home() {
           if (resData.albums && resData.albums.length > 0) {
             setActiveTab(resData.albums[0]);
           }
+
+          // Filter favorites so only IDs that actually exist in the fetched photos remain valid
+          const validPhotoIds = new Set(resData.photos.map((p) => p.id));
+          setFavorites((prev) => prev.filter((id) => validPhotoIds.has(id)));
         } else {
           setError(resData.error || 'Failed to load photos');
         }
@@ -94,9 +100,10 @@ export default function Home() {
     }
   };
 
-  // Bulk Download Favorites ZIP
+  // Bulk Download Favorites ZIP (Ensures only existing photos are sent)
   const handleDownloadAllFavorites = async () => {
-    if (favorites.length === 0) return;
+    const validFavorites = favorites.filter((id) => data.photos.some((p) => p.id === id));
+    if (validFavorites.length === 0) return;
     setDownloadingFavs(true);
 
     try {
@@ -104,7 +111,7 @@ export default function Home() {
       const response = await fetch(`${apiUrl}/api/download-favorites`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photoIds: favorites }),
+        body: JSON.stringify({ photoIds: validFavorites }),
       });
 
       if (!response.ok) throw new Error('Failed to generate ZIP file');
@@ -149,9 +156,12 @@ export default function Home() {
     );
   }
 
+  // Filter out any stale favorite IDs that don't match loaded photos
+  const currentFavoritesList = data.photos.filter((p) => favorites.includes(p.id));
+
   const currentPhotos =
     activeTab === 'Favorites'
-      ? data.photos.filter((p) => favorites.includes(p.id))
+      ? currentFavoritesList
       : data.photos.filter((p) => p.folder === activeTab);
 
   const selectedPhoto = selectedPhotoIndex !== null ? currentPhotos[selectedPhotoIndex] : null;
@@ -190,7 +200,7 @@ export default function Home() {
           <span className={`ml-0.5 px-2 py-0.5 rounded-none text-[10px] tracking-normal ${
             activeTab === 'Favorites' ? 'bg-stone-200/60 text-stone-800 border border-stone-300' : 'bg-white/20 text-white'
           }`}>
-            {favorites.length}
+            {currentFavoritesList.length}
           </span>
         </button>
       </div>
@@ -300,14 +310,14 @@ export default function Home() {
         )}
 
         {/* Download All Favorites Button */}
-        {activeTab === 'Favorites' && favorites.length > 0 && (
+        {activeTab === 'Favorites' && currentFavoritesList.length > 0 && (
           <div className="flex justify-center mb-12">
             <button
               onClick={handleDownloadAllFavorites}
               disabled={downloadingFavs}
               className="px-8 py-3 bg-transparent hover:bg-stone-900/5 text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-300 hover:border-stone-900 shadow-sm transition-all duration-300 flex items-center gap-3 disabled:opacity-50"
             >
-              {downloadingFavs ? 'Packing ZIP File...' : `Download All (${favorites.length})`}
+              {downloadingFavs ? 'Packing ZIP File...' : `Download All (${currentFavoritesList.length})`}
             </button>
           </div>
         )}
@@ -430,7 +440,7 @@ export default function Home() {
                 onClick={() => handleDownloadSingle(selectedPhoto.url, selectedPhoto.filename)}
                 className="flex items-center gap-2 text-[11px] font-light tracking-[0.15em] uppercase text-stone-300 hover:text-white transition"
               >
-                Download Image
+                Download Image Photo
               </button>
             </div>
           </div>
