@@ -168,7 +168,7 @@ export default function Home() {
     }
   };
 
-  // Find a background image for the Favorites page (uses the first favorite or falls back to cover-bg)
+  // Find a background image for the Favorites page
   const favoritePhotosList = data.photos.filter((p) => favorites.includes(p.id));
   const favoritesBgUrl = favoritePhotosList.length > 0 ? favoritePhotosList[0].url : '/cover-bg.jpg';
 
@@ -178,6 +178,18 @@ export default function Home() {
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
       <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet" />
+
+      {/* Global Full-Page Blurred Background for Favorites Tab */}
+      {activeTab === 'Favorites' && (
+        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+          <img
+            src={favoritesBgUrl}
+            alt="Favorites Background"
+            className="w-full h-full object-cover object-center filter blur-2xl scale-110 opacity-50"
+          />
+          <div className="absolute inset-0 bg-[#FDFBF7]/80 backdrop-blur-xl"></div>
+        </div>
+      )}
 
       {/* Top Right Floating Aesthetic Favorites Button with Sharp Edges */}
       <div className="fixed top-6 right-6 z-40">
@@ -235,38 +247,8 @@ export default function Home() {
         </section>
       )}
 
-      {/* Blurred Background Header / Banner for Favorites Tab */}
-      {activeTab === 'Favorites' && (
-        <section className="relative min-h-[35vh] flex flex-col justify-center items-center text-center px-6 border-b border-stone-200/60 overflow-hidden">
-          {/* Blurred Background Image & Gradient Overlay */}
-          <div className="absolute inset-0 z-0 overflow-hidden">
-            <img
-              src={favoritesBgUrl}
-              alt="Favorites Background"
-              className="w-full h-full object-cover object-center filter blur-xl scale-110 opacity-60"
-            />
-            <div className="absolute inset-0 bg-[#FDFBF7]/75 backdrop-blur-md"></div>
-          </div>
-
-          {/* Favorites Header Content */}
-          <div className="relative z-10 max-w-4xl space-y-3 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 font-light">
-              Curated Collection
-            </p>
-            <h2 className="text-4xl md:text-6xl font-light tracking-wide text-stone-900" style={{ fontFamily: "'Dancing Script', cursive" }}>
-              Your Favorite Moments
-            </h2>
-            <div className="flex items-center justify-center gap-4 text-stone-500 text-xs pt-1">
-              <span className="h-[1px] w-8 bg-stone-300"></span>
-              <span className="uppercase tracking-[0.2em] text-[10px] font-light">Saved Memories</span>
-              <span className="h-[1px] w-8 bg-stone-300"></span>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Gallery Content Section */}
-      <section className="max-w-7xl mx-auto px-6 py-12">
+      {/* Gallery Content Section (Renders above the fixed blurred background) */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         {/* Navigation Area: Left-aligned Back button on Favorites, or Centered Album Tabs otherwise */}
         <nav className={`flex ${activeTab === 'Favorites' ? 'justify-start' : 'justify-center'} gap-2 flex-wrap mb-8`}>
           {activeTab === 'Favorites' ? (
@@ -276,7 +258,7 @@ export default function Home() {
                   setActiveTab(data.albums[0]);
                 }
               }}
-              className="px-6 py-2.5 bg-transparent text-stone-900 text-xs font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm flex items-center gap-2"
+              className="px-6 py-2.5 bg-white/60 hover:bg-white text-stone-900 text-xs font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm backdrop-blur-md flex items-center gap-2"
             >
               <span>←</span> Back
             </button>
@@ -309,13 +291,30 @@ export default function Home() {
           </div>
         )}
 
+        {/* Favorites Page Title Header floating over the background */}
+        {activeTab === 'Favorites' && (
+          <div className="text-center mb-12 space-y-3 pt-4">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 font-light">
+              Curated Collection
+            </p>
+            <h2 className="text-4xl md:text-6xl font-light tracking-wide text-stone-900" style={{ fontFamily: "'Dancing Script', cursive" }}>
+              Your Favorite Moments
+            </h2>
+            <div className="flex items-center justify-center gap-4 text-stone-500 text-xs pt-1">
+              <span className="h-[1px] w-8 bg-stone-300"></span>
+              <span className="uppercase tracking-[0.2em] text-[10px] font-light">Saved Memories</span>
+              <span className="h-[1px] w-8 bg-stone-300"></span>
+            </div>
+          </div>
+        )}
+
         {/* Download All Favorites Button */}
         {activeTab === 'Favorites' && favorites.length > 0 && (
           <div className="flex justify-center mb-12">
             <button
               onClick={handleDownloadAllFavorites}
               disabled={downloadingFavs}
-              className="px-8 py-3 bg-transparent hover:bg-stone-900/5 text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-300 hover:border-stone-900 shadow-sm transition-all duration-300 flex items-center gap-3 disabled:opacity-50"
+              className="px-8 py-3 bg-white/60 hover:bg-white text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-300 hover:border-stone-900 shadow-sm backdrop-blur-md transition-all duration-300 flex items-center gap-3 disabled:opacity-50"
             >
               {downloadingFavs ? 'Packing ZIP File...' : `Download All (${favorites.length})`}
             </button>
