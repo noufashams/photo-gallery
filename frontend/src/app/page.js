@@ -202,41 +202,43 @@ export default function Home() {
         </span>
       </div>
 
-      {/* Hero Cover Section (Always shown at top on initial load, scroll down to see gallery) */}
-      <section className="relative h-screen w-full flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-stone-950">
-        {/* Background Image & Overlay */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/cover-bg.jpg"
-            alt="Wedding Cover"
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Subtle dark gradient overlay to make text pop */}
-          <div className="absolute inset-0 bg-stone-950/40"></div>
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-4xl space-y-4 text-white mt-12">
-          {/* Groom & Bride Names with Aesthetic Script Font */}
-          <h1 className="text-6xl md:text-8xl tracking-wide drop-shadow-lg" style={{ fontFamily: "'Dancing Script', cursive" }}>
-            Yaseen <span className="text-stone-300 italic font-normal">&amp;</span> Nada
-          </h1>
-          
-          <div className="flex items-center justify-center gap-4 text-stone-300 text-xs pt-2">
-            <span className="h-[1px] w-12 bg-white/40"></span>
-            <span className="uppercase tracking-[0.2em] text-[11px] font-light drop-shadow-md">Wedding Celebration</span>
-            <span className="h-[1px] w-12 bg-white/40"></span>
+      {/* Hero Cover Section (Only shown when not on Favorites tab) */}
+      {activeTab !== 'Favorites' && (
+        <section className="relative h-screen w-full flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-stone-950">
+          {/* Background Image & Overlay */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src="/cover-bg.jpg"
+              alt="Wedding Cover"
+              className="w-full h-full object-cover object-center"
+            />
+            {/* Subtle dark gradient overlay to make text pop */}
+            <div className="absolute inset-0 bg-stone-950/40"></div>
           </div>
-        </div>
 
-        {/* Scroll Down Indicator */}
-        <div className="absolute bottom-8 z-10 flex flex-col items-center text-white/70 animate-bounce">
-          <span className="text-[10px] uppercase tracking-[0.25em] font-light mb-1">Scroll</span>
-          <span className="text-xs">↓</span>
-        </div>
-      </section>
+          {/* Hero Content */}
+          <div className="relative z-10 max-w-4xl space-y-4 text-white mt-12">
+            {/* Groom & Bride Names with Aesthetic Script Font */}
+            <h1 className="text-6xl md:text-8xl tracking-wide drop-shadow-lg" style={{ fontFamily: "'Dancing Script', cursive" }}>
+              Yaseen <span className="text-stone-300 italic font-normal">&amp;</span> Nada
+            </h1>
+            
+            <div className="flex items-center justify-center gap-4 text-stone-300 text-xs pt-2">
+              <span className="h-[1px] w-12 bg-white/40"></span>
+              <span className="uppercase tracking-[0.2em] text-[11px] font-light drop-shadow-md">Wedding Celebration</span>
+              <span className="h-[1px] w-12 bg-white/40"></span>
+            </div>
+          </div>
 
-      {/* Gallery Content Section (Appears below the full-height cover banner) */}
+          {/* Scroll Down Indicator */}
+          <div className="absolute bottom-8 z-10 flex flex-col items-center text-white/70 animate-bounce">
+            <span className="text-[10px] uppercase tracking-[0.25em] font-light mb-1">Scroll</span>
+            <span className="text-xs">↓</span>
+          </div>
+        </section>
+      )}
+
+      {/* Gallery Content Section */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 py-16">
         {/* Navigation Area: Left-aligned Back button on Favorites, or Centered Album Tabs otherwise */}
         <nav className={`flex ${activeTab === 'Favorites' ? 'justify-start' : 'justify-center'} gap-2 flex-wrap mb-10`}>
