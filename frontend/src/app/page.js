@@ -88,7 +88,7 @@ export default function Home() {
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;
-      link.download = filename || 'photo.jpg';
+      link.download = filename && filename.includes('.') ? filename : `${filename || 'photo'}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -99,7 +99,7 @@ export default function Home() {
     }
   };
 
-  // Client-side ZIP download using JSZip with fixed crossOrigin properties
+  // Robust Client-side ZIP download with guaranteed .jpg extensions
   const handleDownloadAllFavorites = async () => {
     const validFavorites = favorites.filter((id) => data.photos.some((p) => p.id === id));
     if (validFavorites.length === 0) return;
@@ -130,8 +130,12 @@ export default function Home() {
           try {
             const response = await fetch(photo.url);
             const blob = await response.blob();
-            const filename = photo.filename || `wedding_photo_${idx + 1}.jpg`;
-            zip.file(filename, blob);
+            
+            // Ensure filename always has a proper image extension
+            let rawName = photo.filename || `wedding_photo_${idx + 1}`;
+            const safeFilename = rawName.includes('.') ? rawName : `${rawName}.jpg`;
+
+            zip.file(safeFilename, blob);
           } catch (err) {
             console.error(`Failed to fetch image for zip: ${photo.url}`, err);
           }

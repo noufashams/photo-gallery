@@ -51,11 +51,15 @@ const getCloudinaryGalleryData = async () => {
       const folder = parts.length > 2 ? parts[1] : 'General';
       albumsSet.add(folder);
 
+      const rawFilename = parts[parts.length - 1];
+      // Ensure the filename has an extension so OS knows it's an image
+      const filename = rawFilename.includes('.') ? rawFilename : `${rawFilename}.jpg`;
+
       photos.push({
         id: file.public_id,
         url: file.secure_url,
         folder: folder,
-        filename: parts[parts.length - 1],
+        filename: filename,
       });
     });
 
@@ -81,11 +85,9 @@ app.get('/api/gallery', async (req, res) => {
   res.json({ success: true, ...data });
 });
 
-// POST /api/download-favorites - Redirects or streams favorite URLs for download
 const https = require('https');
 const archiver = require('archiver');
 
-// POST /api/download-favorites - Streams selected photos as a ZIP file
 // POST /api/download-favorites - Streams selected photos as a ZIP file
 app.post('/api/download-favorites', async (req, res) => {
   const { photoIds } = req.body;
@@ -124,7 +126,9 @@ app.post('/api/download-favorites', async (req, res) => {
     for (const id of photoIds) {
       const url = photoMap.get(id);
       if (url) {
-        const filename = id.split('/').pop() || 'photo.jpg';
+        const rawName = id.split('/').pop() || 'photo';
+        const filename = rawName.includes('.') ? rawName : `${rawName}.jpg`;
+
         await new Promise((resolve) => {
           https.get(url, (imageStream) => {
             archive.append(imageStream, { name: filename });
