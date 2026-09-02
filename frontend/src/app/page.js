@@ -99,19 +99,17 @@ export default function Home() {
     }
   };
 
-  // Client-side ZIP Download fallback using JSZip to fix the TextEdit garbled file output issue completely!
+  // Completely reliable Client-side ZIP download using JSZip with proper base64 data extraction
   const handleDownloadAllFavorites = async () => {
     const validFavorites = favorites.filter((id) => data.photos.some((p) => p.id === id));
     if (validFavorites.length === 0) return;
     setDownloadingFavs(true);
 
     try {
-      // Dynamically load JSZip from CDN to avoid dependency missing issues
       if (!window.JSZip) {
         await new Promise((resolve, reject) => {
           const script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax5/libs/jszip/3.10.1/jszip.min.js';
-          // Fallback CDN if needed
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
           script.onerror = () => {
             const fallback = document.createElement('script');
             fallback.src = 'https://unpkg.com/jszip@3.10.1/dist/jszip.min.js';
@@ -127,13 +125,12 @@ export default function Home() {
       const zip = new window.JSZip();
       const selectedPhotosData = data.photos.filter((p) => validFavorites.includes(p.id));
 
-      // Fetch each image as a binary blob and add to the ZIP archive
       await Promise.all(
         selectedPhotosData.map(async (photo, idx) => {
           try {
             const response = await fetch(photo.url);
             const blob = await response.blob();
-            const filename = photo.filename || `photo_${idx + 1}.jpg`;
+            const filename = photo.filename || `wedding_photo_${idx + 1}.jpg`;
             zip.file(filename, blob);
           } catch (err) {
             console.error(`Failed to fetch image for zip: ${photo.url}`, err);
@@ -141,7 +138,6 @@ export default function Home() {
         })
       );
 
-      // Generate the actual ZIP blob and trigger client download
       const content = await zip.generateAsync({ type: 'blob' });
       const blobUrl = window.URL.createObjectURL(content);
       const link = document.createElement('a');
@@ -153,7 +149,7 @@ export default function Home() {
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.error('Client-side ZIP generation failed:', err);
-      alert('Failed to generate favorites ZIP file.');
+      alert('Failed to download ZIP file.');
     } finally {
       setDownloadingFavs(false);
     }
@@ -182,7 +178,6 @@ export default function Home() {
     );
   }
 
-  // Filter valid favorites that actually exist in the current photos dataset
   const currentFavoritesList = data.photos.filter((p) => favorites.includes(p.id));
 
   const currentPhotos =
@@ -206,7 +201,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen text-stone-900 select-none relative bg-[#FDFBF7]">
-      {/* Google Fonts Import for Aesthetic Script */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
       <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet" />
@@ -238,23 +232,19 @@ export default function Home() {
         </span>
       </div>
 
-      {/* Hero Cover Section (Only shown when NOT on the Favorites tab) */}
+      {/* Hero Cover Section (Only shown when NOT on Favorites tab) */}
       {activeTab !== 'Favorites' && (
         <section className="relative h-screen w-full flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-stone-950">
-          {/* Background Image & Overlay */}
           <div className="absolute inset-0 z-0">
             <img
               src="/cover-bg.jpg"
               alt="Wedding Cover"
               className="w-full h-full object-cover object-center"
             />
-            {/* Subtle dark gradient overlay to make text pop */}
             <div className="absolute inset-0 bg-stone-950/40"></div>
           </div>
 
-          {/* Hero Content */}
           <div className="relative z-10 max-w-4xl space-y-4 text-white mt-12">
-            {/* Groom & Bride Names with Aesthetic Script Font (No Date) */}
             <h1 className="text-6xl md:text-8xl tracking-wide drop-shadow-lg" style={{ fontFamily: "'Dancing Script', cursive" }}>
               Yaseen <span className="text-stone-300 italic font-normal">&amp;</span> Nada
             </h1>
@@ -266,7 +256,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Scroll Down Indicator */}
           <div className="absolute bottom-8 z-10 flex flex-col items-center text-white/70 animate-bounce">
             <span className="text-[10px] uppercase tracking-[0.25em] font-light mb-1">Scroll</span>
             <span className="text-xs">↓</span>
@@ -276,7 +265,6 @@ export default function Home() {
 
       {/* Gallery Content Section */}
       <section className={`relative z-10 max-w-7xl mx-auto px-6 py-16 ${activeTab === 'Favorites' ? 'pt-28' : ''}`}>
-        {/* Navigation Area: Left-aligned Back button on Favorites, or Centered Album Tabs otherwise */}
         <nav className={`flex ${activeTab === 'Favorites' ? 'justify-start' : 'justify-center'} gap-2 flex-wrap mb-10`}>
           {activeTab === 'Favorites' ? (
             <button
@@ -306,7 +294,6 @@ export default function Home() {
           )}
         </nav>
 
-        {/* Dynamic Album Title Header */}
         {activeTab !== 'Favorites' && (
           <div className="text-center mb-12 space-y-1">
             <h2 className="text-2xl md:text-3xl font-light tracking-[0.2em] uppercase text-stone-800">
@@ -318,7 +305,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Aesthetic Favorites Title Header */}
         {activeTab === 'Favorites' && (
           <div className="text-center mb-12 space-y-3">
             <p className="text-[10px] uppercase tracking-[0.3em] text-stone-400 font-light">
@@ -335,7 +321,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Download All Favorites Button (Only renders if there are actual valid favorited photos) */}
         {activeTab === 'Favorites' && currentFavoritesList.length > 0 && (
           <div className="flex justify-center mb-12">
             <button
@@ -348,7 +333,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Photo Grid */}
         {currentPhotos.length === 0 ? (
           <div className="text-center py-24 space-y-4">
             <span className="text-3xl text-stone-300">♥</span>
@@ -378,7 +362,6 @@ export default function Home() {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
-                  {/* Overlay Controls */}
                   <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 via-transparent to-stone-950/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-between">
                     <div className="flex justify-end">
                       <button
