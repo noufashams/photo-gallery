@@ -13,6 +13,17 @@ export default function Home() {
   const [favorites, setFavorites] = useState([]);
   const [downloadingFavs, setDownloadingFavs] = useState(false);
 
+  // Map your custom dates for each specific album name here
+  const albumDates = {
+    'MEHNDI': '9 October 2026',
+    'NIKKAH': '9 October 2026',
+    'WEDDING DAY': '18 JULY 2026',
+    'WEDDING EVE': '17 JULY 2026',
+    
+
+    // Add any other albums and their custom dates here
+  };
+
   // Load Favorites from LocalStorage on mount and sanitize
   useEffect(() => {
     const saved = localStorage.getItem('wedding_gallery_favs');
@@ -205,16 +216,6 @@ export default function Home() {
     }
   };
 
-  // Helper to map dates to your album names (change these dates to match your actual event dates)
-  const getAlbumDate = (albumName) => {
-    const datesMap = {
-      Reception: 'October 24, 2026',
-      Wedding: 'October 25, 2026',
-      Mehendi: 'October 23, 2026',
-    };
-    return datesMap[albumName] || 'October 2026';
-  };
-
   return (
     <main className="min-h-screen text-stone-900 select-none relative bg-[#FDFBF7]">
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -240,6 +241,22 @@ export default function Home() {
           </span>
         </button>
       </div>
+
+      {/* Persistent Top Left Back Button (Only shown when on Favorites tab) */}
+      {activeTab === 'Favorites' && (
+        <div className="fixed top-6 left-6 z-50">
+          <button
+            onClick={() => {
+              if (data.albums && data.albums.length > 0) {
+                setActiveTab(data.albums[0]);
+              }
+            }}
+            className="px-5 py-2.5 bg-transparent text-stone-900 text-[11px] font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm flex items-center gap-2 backdrop-blur-md bg-stone-100/50"
+          >
+            <span>←</span> Back
+          </button>
+        </div>
+      )}
 
       {/* Hero Cover Section (Only shown when NOT on Favorites tab) */}
       {activeTab !== 'Favorites' && (
@@ -274,20 +291,10 @@ export default function Home() {
 
       {/* Gallery Content Section */}
       <section className={`relative z-10 max-w-7xl mx-auto px-6 py-16 ${activeTab === 'Favorites' ? 'pt-28' : ''}`}>
-        <nav className={`flex ${activeTab === 'Favorites' ? 'justify-start' : 'justify-center'} gap-2 flex-wrap mb-10`}>
-          {activeTab === 'Favorites' ? (
-            <button
-              onClick={() => {
-                if (data.albums && data.albums.length > 0) {
-                  setActiveTab(data.albums[0]);
-                }
-              }}
-              className="px-6 py-2.5 bg-transparent text-stone-900 text-xs font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm flex items-center gap-2"
-            >
-              <span>←</span> Back
-            </button>
-          ) : (
-            data.albums.map((album) => (
+        {/* Navigation tabs (Only album tabs shown here now) */}
+        {activeTab !== 'Favorites' && (
+          <nav className="flex justify-center gap-2 flex-wrap mb-10">
+            {data.albums.map((album) => (
               <button
                 key={album}
                 onClick={() => setActiveTab(album)}
@@ -299,9 +306,9 @@ export default function Home() {
               >
                 {album} 
               </button>
-            ))
-          )}
-        </nav>
+            ))}
+          </nav>
+        )}
 
         {activeTab !== 'Favorites' && (
           <div className="text-center mb-12 space-y-1">
@@ -309,7 +316,7 @@ export default function Home() {
               {activeTab}
             </h2>
             <p className="text-[11px] tracking-[0.15em] uppercase text-stone-400 font-light">
-              {getAlbumDate(activeTab)}
+              {albumDates[activeTab] || 'Wedding Celebration'}
             </p>
           </div>
         )}
