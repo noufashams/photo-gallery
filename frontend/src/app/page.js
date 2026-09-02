@@ -128,20 +128,20 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#111] text-stone-300">
-        <p className="text-xs tracking-[0.25em] uppercase font-light animate-pulse">Loading Gallery...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#FDFBF7] text-stone-800">
+        <p className="text-xs tracking-[0.25em] uppercase font-light animate-pulse text-stone-500">Loading Gallery...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#111] text-stone-100 p-6 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FDFBF7] text-stone-900 p-6 text-center">
         <h2 className="text-xl font-serif font-light mb-2">Connection Error</h2>
-        <p className="max-w-md text-stone-400 text-sm">{error}</p>
+        <p className="max-w-md text-stone-500 text-sm">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-6 px-6 py-2.5 bg-white text-stone-900 text-xs tracking-widest uppercase rounded-none hover:bg-stone-200 transition"
+          className="mt-6 px-6 py-2.5 bg-stone-900 text-white text-xs tracking-widest uppercase rounded-none hover:bg-stone-800 transition"
         >
           Retry Connection
         </button>
@@ -168,10 +168,6 @@ export default function Home() {
     }
   };
 
-  // Find a background image for the Favorites page blurred background
-  const favoritePhotosList = data.photos.filter((p) => favorites.includes(p.id));
-  const favoritesBgUrl = favoritePhotosList.length > 0 ? favoritePhotosList[0].url : '/cover-bg.jpg';
-
   return (
     <main className="min-h-screen text-stone-900 select-none relative bg-[#FDFBF7]">
       {/* Google Fonts Import for Aesthetic Script */}
@@ -185,13 +181,15 @@ export default function Home() {
           onClick={() => setActiveTab('Favorites')}
           className={`px-5 py-2.5 rounded-none text-[11px] font-light tracking-[0.2em] uppercase transition-all duration-300 flex items-center gap-2.5 backdrop-blur-md shadow-sm border ${
             activeTab === 'Favorites'
-              ? 'bg-stone-900/80 text-white border-stone-700 hover:bg-stone-900'
+              ? 'bg-transparent text-stone-900 border-stone-400 hover:bg-stone-100/50'
               : 'bg-stone-900/60 text-white border-white/20 hover:bg-stone-900/80'
           }`}
         >
-          <span className="text-xs text-red-400">♥</span>
+          <span className="text-xs text-red-500">♥</span>
           <span className="font-normal">Favorites</span>
-          <span className="ml-0.5 px-2 py-0.5 rounded-none text-[10px] tracking-normal bg-white/20 text-white">
+          <span className={`ml-0.5 px-2 py-0.5 rounded-none text-[10px] tracking-normal ${
+            activeTab === 'Favorites' ? 'bg-stone-200/60 text-stone-800 border border-stone-300' : 'bg-white/20 text-white'
+          }`}>
             {favorites.length}
           </span>
         </button>
@@ -204,18 +202,6 @@ export default function Home() {
         </span>
       </div>
 
-      {/* Global Full-Page Blurred Background ONLY for Favorites Tab */}
-      {activeTab === 'Favorites' && (
-        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-          <img
-            src={favoritesBgUrl}
-            alt="Favorites Background"
-            className="w-full h-full object-cover object-center filter blur-3xl scale-110 opacity-40"
-          />
-          <div className="absolute inset-0 bg-[#FDFBF7]/85 backdrop-blur-2xl"></div>
-        </div>
-      )}
-
       {/* Hero Cover Section (Always shown at top on initial load, scroll down to see gallery) */}
       <section className="relative h-screen w-full flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-stone-950">
         {/* Background Image & Overlay */}
@@ -225,7 +211,7 @@ export default function Home() {
             alt="Wedding Cover"
             className="w-full h-full object-cover object-center"
           />
-          {/* Subtle dark gradient overlay to make text pop like in your photo */}
+          {/* Subtle dark gradient overlay to make text pop */}
           <div className="absolute inset-0 bg-stone-950/40"></div>
         </div>
 
@@ -237,9 +223,9 @@ export default function Home() {
           </h1>
           
           <div className="flex items-center justify-center gap-4 text-stone-300 text-xs pt-2">
-            <span className="h-[1px] w-10 bg-white/40"></span>
-            <span className="uppercase tracking-[0.3em] font-light drop-shadow-md">18 July 2025</span>
-            <span className="h-[1px] w-10 bg-white/40"></span>
+            <span className="h-[1px] w-12 bg-white/40"></span>
+            <span className="uppercase tracking-[0.2em] text-[11px] font-light drop-shadow-md">Wedding Celebration</span>
+            <span className="h-[1px] w-12 bg-white/40"></span>
           </div>
         </div>
 
@@ -261,9 +247,9 @@ export default function Home() {
                   setActiveTab(data.albums[0]);
                 }
               }}
-              className="px-6 py-2.5 bg-white/80 hover:bg-white text-stone-900 text-xs font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm backdrop-blur-md flex items-center gap-2"
+              className="px-6 py-2.5 bg-transparent text-stone-900 text-xs font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm flex items-center gap-2"
             >
-              <span>←</span> Back to Gallery
+              <span>←</span> Back
             </button>
           ) : (
             data.albums.map((album) => (
@@ -273,7 +259,7 @@ export default function Home() {
                 className={`px-6 py-2.5 rounded-none text-xs font-light tracking-[0.15em] uppercase transition-all ${
                   activeTab === album
                     ? 'bg-stone-900 text-white font-normal shadow-sm'
-                    : 'bg-stone-100/90 text-stone-600 hover:bg-stone-200 hover:text-stone-900 border border-stone-200'
+                    : 'bg-stone-100/80 text-stone-600 hover:bg-stone-200 hover:text-stone-900 border border-stone-200'
                 }`}
               >
                 {album} 
@@ -294,16 +280,16 @@ export default function Home() {
           </div>
         )}
 
-        {/* Favorites Header floating over blurred background */}
+        {/* Aesthetic Favorites Title Header */}
         {activeTab === 'Favorites' && (
           <div className="text-center mb-12 space-y-3">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 font-light">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-stone-400 font-light">
               Curated Collection
             </p>
-            <h2 className="text-4xl md:text-6xl font-light tracking-wide text-stone-900" style={{ fontFamily: "'Dancing Script', cursive" }}>
+            <h2 className="text-4xl md:text-5xl font-light tracking-wide text-stone-900" style={{ fontFamily: "'Dancing Script', cursive" }}>
               Your Favorite Moments
             </h2>
-            <div className="flex items-center justify-center gap-4 text-stone-500 text-xs pt-1">
+            <div className="flex items-center justify-center gap-4 text-stone-400 text-xs pt-1">
               <span className="h-[1px] w-8 bg-stone-300"></span>
               <span className="uppercase tracking-[0.2em] text-[10px] font-light">Saved Memories</span>
               <span className="h-[1px] w-8 bg-stone-300"></span>
@@ -317,7 +303,7 @@ export default function Home() {
             <button
               onClick={handleDownloadAllFavorites}
               disabled={downloadingFavs}
-              className="px-8 py-3 bg-white/80 hover:bg-white text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-300 hover:border-stone-900 shadow-sm backdrop-blur-md transition-all duration-300 flex items-center gap-3 disabled:opacity-50"
+              className="px-8 py-3 bg-transparent hover:bg-stone-900/5 text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-300 hover:border-stone-900 shadow-sm transition-all duration-300 flex items-center gap-3 disabled:opacity-50"
             >
               {downloadingFavs ? 'Packing ZIP File...' : `Download All (${favorites.length})`}
             </button>
