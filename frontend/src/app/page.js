@@ -13,7 +13,7 @@ export default function Home() {
   const [favorites, setFavorites] = useState([]);
   const [downloadingFavs, setDownloadingFavs] = useState(false);
 
-  // Load Favorites from LocalStorage on mount and sanitize against loaded photos
+  // Load Favorites from LocalStorage on mount and sanitize
   useEffect(() => {
     const saved = localStorage.getItem('wedding_gallery_favs');
     if (saved) {
@@ -32,7 +32,7 @@ export default function Home() {
     localStorage.setItem('wedding_gallery_favs', JSON.stringify(favorites));
   }, [favorites]);
 
-  // Fetch photos from backend and filter out invalid/stale favorite IDs
+  // Fetch photos from backend and clean stale IDs
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://photo-gallery-iw5a.onrender.com';
 
@@ -48,7 +48,6 @@ export default function Home() {
             setActiveTab(resData.albums[0]);
           }
 
-          // Filter favorites so only IDs that actually exist in the fetched photos remain valid
           const validPhotoIds = new Set(resData.photos.map((p) => p.id));
           setFavorites((prev) => prev.filter((id) => validPhotoIds.has(id)));
         } else {
@@ -100,7 +99,7 @@ export default function Home() {
     }
   };
 
-  // Bulk Download Favorites ZIP (Ensures only existing photos are sent)
+  // Bulk Download Favorites ZIP
   const handleDownloadAllFavorites = async () => {
     const validFavorites = favorites.filter((id) => data.photos.some((p) => p.id === id));
     if (validFavorites.length === 0) return;
@@ -156,7 +155,7 @@ export default function Home() {
     );
   }
 
-  // Filter out any stale favorite IDs that don't match loaded photos
+  // Filter valid favorites that actually exist in the current photos dataset
   const currentFavoritesList = data.photos.filter((p) => favorites.includes(p.id));
 
   const currentPhotos =
@@ -207,49 +206,13 @@ export default function Home() {
 
       {/* Persistent Top Left Title */}
       <div className="fixed top-6 left-6 z-50 pointer-events-none">
-        <span className="text-white text-xs uppercase tracking-[0.25em] font-light drop-shadow-md">
+        <span className="text-stone-900 text-xs uppercase tracking-[0.25em] font-light">
           Yaseen <span className="italic font-normal">&amp;</span> Nada
         </span>
       </div>
 
-      {/* Hero Cover Section (Only shown when not on Favorites tab) */}
-      {activeTab !== 'Favorites' && (
-        <section className="relative h-screen w-full flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-stone-950">
-          {/* Background Image & Overlay */}
-          <div className="absolute inset-0 z-0">
-            <img
-              src="/cover-bg.jpg"
-              alt="Wedding Cover"
-              className="w-full h-full object-cover object-center"
-            />
-            {/* Subtle dark gradient overlay to make text pop */}
-            <div className="absolute inset-0 bg-stone-950/40"></div>
-          </div>
-
-          {/* Hero Content */}
-          <div className="relative z-10 max-w-4xl space-y-4 text-white mt-12">
-            {/* Groom & Bride Names with Aesthetic Script Font */}
-            <h1 className="text-6xl md:text-8xl tracking-wide drop-shadow-lg" style={{ fontFamily: "'Dancing Script', cursive" }}>
-              Yaseen <span className="text-stone-300 italic font-normal">&amp;</span> Nada
-            </h1>
-            
-            <div className="flex items-center justify-center gap-4 text-stone-300 text-xs pt-2">
-              <span className="h-[1px] w-12 bg-white/40"></span>
-              <span className="uppercase tracking-[0.2em] text-[11px] font-light drop-shadow-md">Wedding Celebration</span>
-              <span className="h-[1px] w-12 bg-white/40"></span>
-            </div>
-          </div>
-
-          {/* Scroll Down Indicator */}
-          <div className="absolute bottom-8 z-10 flex flex-col items-center text-white/70 animate-bounce">
-            <span className="text-[10px] uppercase tracking-[0.25em] font-light mb-1">Scroll</span>
-            <span className="text-xs">↓</span>
-          </div>
-        </section>
-      )}
-
       {/* Gallery Content Section */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 py-16">
+      <section className="relative z-10 max-w-7xl mx-auto px-6 py-16 pt-28">
         {/* Navigation Area: Left-aligned Back button on Favorites, or Centered Album Tabs otherwise */}
         <nav className={`flex ${activeTab === 'Favorites' ? 'justify-start' : 'justify-center'} gap-2 flex-wrap mb-10`}>
           {activeTab === 'Favorites' ? (
@@ -309,7 +272,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* Download All Favorites Button */}
+        {/* Download All Favorites Button (Only renders if there are actual valid favorited photos) */}
         {activeTab === 'Favorites' && currentFavoritesList.length > 0 && (
           <div className="flex justify-center mb-12">
             <button
@@ -434,13 +397,13 @@ export default function Home() {
                 ♥ {favorites.includes(selectedPhoto.id) ? 'Favorited' : 'Favorite'}
               </button>
 
-              <div className="h-4 w-[1px] bg-stone-800" />
+              <div className="h-4 w-[1px] text-white/20" />
 
               <button
                 onClick={() => handleDownloadSingle(selectedPhoto.url, selectedPhoto.filename)}
                 className="flex items-center gap-2 text-[11px] font-light tracking-[0.15em] uppercase text-stone-300 hover:text-white transition"
               >
-                Download Image Photo
+                Download Image
               </button>
             </div>
           </div>
