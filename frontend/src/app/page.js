@@ -175,21 +175,21 @@ export default function Home() {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
       <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet" />
 
-      {/* Top Right Floating Aesthetic Favorites Button */}
+      {/* Top Right Floating Aesthetic Favorites Button with Sharp Edges */}
       <div className="fixed top-6 right-6 z-40">
         <button
           onClick={() => setActiveTab('Favorites')}
-          className={`px-5 py-2.5 rounded-full text-[11px] font-light tracking-[0.2em] uppercase transition-all duration-300 flex items-center gap-2.5 backdrop-blur-md shadow-sm border ${
+          className={`px-5 py-2.5 rounded-none text-[11px] font-light tracking-[0.2em] uppercase transition-all duration-300 flex items-center gap-2.5 backdrop-blur-md shadow-sm border ${
             activeTab === 'Favorites'
               ? 'bg-stone-900 text-white border-stone-900 shadow-md'
               : 'bg-white/70 text-stone-700 hover:bg-white hover:border-stone-400 border-stone-200/80'
           }`}
         >
-          <span className={`text-xs transition-colors ${activeTab === 'Favorites' ? 'text-rose-300' : 'text-stone-400'}`}>
+          <span className="text-xs text-red-500">
             ♥
           </span>
           <span className="font-normal">Favorites</span>
-          <span className={`ml-0.5 px-2 py-0.5 rounded-full text-[10px] tracking-normal ${
+          <span className={`ml-0.5 px-2 py-0.5 rounded-none text-[10px] tracking-normal ${
             activeTab === 'Favorites' ? 'bg-stone-800 text-stone-200' : 'bg-stone-100 text-stone-600'
           }`}>
             {favorites.length}
@@ -201,11 +201,11 @@ export default function Home() {
       {activeTab !== 'Favorites' && (
         <section className="relative min-h-[70vh] flex flex-col justify-center items-center text-center px-6 border-b border-stone-200 overflow-hidden">
           {/* Background Image & Overlay */}
-          <div className="absolute inset-0 z-0 bg-stone-900 flex items-center justify-center">
+          <div className="absolute inset-0 z-0">
             <img
               src="/cover-bg.jpg"
               alt="Wedding Cover"
-              className="w-full h-full object-contain object-center"
+              className="w-full h-full object-cover object-center"
             />
             {/* Dark overlay to keep text readable */}
             <div className="absolute inset-0 bg-stone-950/40"></div>
@@ -233,21 +233,34 @@ export default function Home() {
 
       {/* Gallery Content Section */}
       <section className="max-w-7xl mx-auto px-6 py-12">
-        {/* Category Navigation Tabs */}
+        {/* Navigation Area: Back to Gallery button on Favorites, or Album Tabs otherwise */}
         <nav className="flex justify-center gap-2 flex-wrap mb-10">
-          {data.albums.map((album) => (
+          {activeTab === 'Favorites' ? (
             <button
-              key={album}
-              onClick={() => setActiveTab(album)}
-              className={`px-6 py-2.5 rounded-none text-xs font-light tracking-[0.15em] uppercase transition-all ${
-                activeTab === album
-                  ? 'bg-stone-900 text-white font-normal shadow-sm'
-                  : 'bg-stone-100/80 text-stone-600 hover:bg-stone-200 hover:text-stone-900 border border-stone-200'
-              }`}
+              onClick={() => {
+                if (data.albums && data.albums.length > 0) {
+                  setActiveTab(data.albums[0]);
+                }
+              }}
+              className="px-8 py-2.5 bg-stone-900 text-white text-xs font-light tracking-[0.15em] uppercase rounded-none hover:bg-stone-800 transition shadow-sm"
             >
-              {album} 
+              ← Back to Gallery
             </button>
-          ))}
+          ) : (
+            data.albums.map((album) => (
+              <button
+                key={album}
+                onClick={() => setActiveTab(album)}
+                className={`px-6 py-2.5 rounded-none text-xs font-light tracking-[0.15em] uppercase transition-all ${
+                  activeTab === album
+                    ? 'bg-stone-900 text-white font-normal shadow-sm'
+                    : 'bg-stone-100/80 text-stone-600 hover:bg-stone-200 hover:text-stone-900 border border-stone-200'
+                }`}
+              >
+                {album} 
+              </button>
+            ))
+          )}
         </nav>
 
         {/* Download All Favorites Button */}
@@ -293,7 +306,7 @@ export default function Home() {
                       <button
                         onClick={(e) => toggleFavorite(photo.id, e)}
                         className={`p-2.5 rounded-none backdrop-blur-md transition ${
-                          isFav ? 'bg-stone-900 text-white' : 'bg-white/90 text-stone-800 hover:bg-white'
+                          isFav ? 'bg-stone-900 text-red-500' : 'bg-white/90 text-stone-800 hover:bg-white'
                         }`}
                         title={isFav ? 'Remove from favorites' : 'Add to favorites'}
                       >
@@ -365,7 +378,7 @@ export default function Home() {
               <button
                 onClick={() => toggleFavorite(selectedPhoto.id)}
                 className={`flex items-center gap-2 text-[11px] font-light tracking-[0.15em] uppercase transition ${
-                  favorites.includes(selectedPhoto.id) ? 'text-stone-200' : 'text-stone-400 hover:text-white'
+                  favorites.includes(selectedPhoto.id) ? 'text-red-500' : 'text-stone-400 hover:text-white'
                 }`}
               >
                 ♥ {favorites.includes(selectedPhoto.id) ? 'Favorited' : 'Favorite'}
