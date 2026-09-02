@@ -99,7 +99,6 @@ export default function Home() {
     }
   };
 
-  // Robust Client-side ZIP download with guaranteed .jpg extensions
   // Bulletproof Client-side ZIP download with enforced .jpg extensions
   const handleDownloadAllFavorites = async () => {
     const validFavorites = favorites.filter((id) => data.photos.some((p) => p.id === id));
@@ -132,7 +131,6 @@ export default function Home() {
             const response = await fetch(photo.url);
             const blob = await response.blob();
             
-            // Clean filename and guarantee a .jpg extension
             let baseName = photo.filename || photo.id.split('/').pop() || `wedding_photo_${idx + 1}`;
             if (baseName.includes('.')) {
               baseName = baseName.substring(0, baseName.lastIndexOf('.'));
@@ -162,6 +160,7 @@ export default function Home() {
       setDownloadingFavs(false);
     }
   };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#FDFBF7] text-stone-800">
@@ -206,6 +205,16 @@ export default function Home() {
     }
   };
 
+  // Helper to map dates to your album names (change these dates to match your actual event dates)
+  const getAlbumDate = (albumName) => {
+    const datesMap = {
+      Reception: 'October 24, 2026',
+      Wedding: 'October 25, 2026',
+      Mehendi: 'October 23, 2026',
+    };
+    return datesMap[albumName] || 'October 2026';
+  };
+
   return (
     <main className="min-h-screen text-stone-900 select-none relative bg-[#FDFBF7]">
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -230,13 +239,6 @@ export default function Home() {
             {currentFavoritesList.length}
           </span>
         </button>
-      </div>
-
-      {/* Persistent Top Left Title */}
-      <div className="fixed top-6 left-6 z-50 pointer-events-none">
-        <span className={`text-xs uppercase tracking-[0.25em] font-light transition-colors duration-300 ${activeTab === 'Favorites' ? 'text-stone-900' : 'text-white drop-shadow-md'}`}>
-          Yaseen <span className="italic font-normal">&amp;</span> Nada
-        </span>
       </div>
 
       {/* Hero Cover Section (Only shown when NOT on Favorites tab) */}
@@ -307,7 +309,7 @@ export default function Home() {
               {activeTab}
             </h2>
             <p className="text-[11px] tracking-[0.15em] uppercase text-stone-400 font-light">
-              {activeTab} Moments
+              {getAlbumDate(activeTab)}
             </p>
           </div>
         )}
