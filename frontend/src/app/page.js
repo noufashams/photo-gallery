@@ -172,7 +172,7 @@ export default function Home() {
     <main className="min-h-screen bg-[#FBF9F5] text-stone-900 select-none relative">
       {/* Google Fonts Import for Aesthetic Script */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
       <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet" />
 
       {/* Top Right Floating Aesthetic Favorites Button */}
@@ -197,37 +197,39 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Hero Cover Section with Background Image */}
-      <section className="relative min-h-[70vh] flex flex-col justify-center items-center text-center px-6 border-b border-stone-200 overflow-hidden">
-        {/* Background Image & Overlay */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/cover-bg.jpg"
-            alt="Wedding Cover"
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Dark overlay to keep text readable */}
-          <div className="absolute inset-0 bg-stone-950/40"></div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 max-w-4xl space-y-5 text-white">
-          <p className="text-xs uppercase tracking-[0.3em] text-stone-300 font-light drop-shadow-md">
-            Together Forever
-          </p>
-          
-          {/* Groom & Bride Names with Aesthetic Font */}
-          <h1 className="text-6xl md:text-8xl tracking-wide drop-shadow-lg" style={{ fontFamily: "'Dancing Script', cursive" }}>
-            Yaseen <span className="text-stone-300 italic font-normal">&amp;</span> Nada
-          </h1>
-          
-          <div className="flex items-center justify-center gap-4 text-stone-300 text-sm">
-            <span className="h-[1px] w-12 bg-white/40"></span>
-            <span className="uppercase tracking-[0.2em] text-[11px] font-light drop-shadow-md">Wedding Celebration</span>
-            <span className="h-[1px] w-12 bg-white/40"></span>
+      {/* Hero Cover Section - Hidden when Favorites tab is active */}
+      {activeTab !== 'Favorites' && (
+        <section className="relative min-h-[70vh] flex flex-col justify-center items-center text-center px-6 border-b border-stone-200 overflow-hidden">
+          {/* Background Image & Overlay */}
+          <div className="absolute inset-0 z-0 bg-stone-900 flex items-center justify-center">
+            <img
+              src="/cover-bg.jpg"
+              alt="Wedding Cover"
+              className="w-full h-full object-contain object-center"
+            />
+            {/* Dark overlay to keep text readable */}
+            <div className="absolute inset-0 bg-stone-950/40"></div>
           </div>
-        </div>
-      </section>
+
+          {/* Content */}
+          <div className="relative z-10 max-w-4xl space-y-5 text-white">
+            <p className="text-xs uppercase tracking-[0.3em] text-stone-300 font-light drop-shadow-md">
+              Together Forever
+            </p>
+            
+            {/* Groom & Bride Names with Aesthetic Font */}
+            <h1 className="text-6xl md:text-8xl tracking-wide drop-shadow-lg" style={{ fontFamily: "'Dancing Script', cursive" }}>
+              Yaseen <span className="text-stone-300 italic font-normal">&amp;</span> Nada
+            </h1>
+            
+            <div className="flex items-center justify-center gap-4 text-stone-300 text-sm">
+              <span className="h-[1px] w-12 bg-white/40"></span>
+              <span className="uppercase tracking-[0.2em] text-[11px] font-light drop-shadow-md">Wedding Celebration</span>
+              <span className="h-[1px] w-12 bg-white/40"></span>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Gallery Content Section */}
       <section className="max-w-7xl mx-auto px-6 py-12">
