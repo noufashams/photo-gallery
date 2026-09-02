@@ -128,7 +128,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FBF9F5] text-stone-800">
+      <div className="flex min-h-screen items-center justify-center bg-[#FDFBF7] text-stone-800">
         <p className="text-xs tracking-[0.25em] uppercase font-light animate-pulse text-stone-500">Loading Gallery...</p>
       </div>
     );
@@ -136,7 +136,7 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FBF9F5] text-stone-900 p-6 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FDFBF7] text-stone-900 p-6 text-center">
         <h2 className="text-xl font-serif font-light mb-2">Connection Error</h2>
         <p className="max-w-md text-stone-500 text-sm">{error}</p>
         <button
@@ -169,7 +169,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FBF9F5] text-stone-900 select-none relative">
+    <main className="min-h-screen bg-[#FDFBF7] text-stone-900 select-none relative">
       {/* Google Fonts Import for Aesthetic Script */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -181,7 +181,7 @@ export default function Home() {
           onClick={() => setActiveTab('Favorites')}
           className={`px-5 py-2.5 rounded-none text-[11px] font-light tracking-[0.2em] uppercase transition-all duration-300 flex items-center gap-2.5 backdrop-blur-md shadow-sm border ${
             activeTab === 'Favorites'
-              ? 'bg-stone-900 text-white border-stone-900 shadow-md'
+              ? 'bg-transparent text-stone-900 border-stone-400 hover:bg-stone-100/50'
               : 'bg-white/70 text-stone-700 hover:bg-white hover:border-stone-400 border-stone-200/80'
           }`}
         >
@@ -190,7 +190,7 @@ export default function Home() {
           </span>
           <span className="font-normal">Favorites</span>
           <span className={`ml-0.5 px-2 py-0.5 rounded-none text-[10px] tracking-normal ${
-            activeTab === 'Favorites' ? 'bg-stone-800 text-stone-200' : 'bg-stone-100 text-stone-600'
+            activeTab === 'Favorites' ? 'bg-stone-200/60 text-stone-800 border border-stone-300' : 'bg-stone-100 text-stone-600'
           }`}>
             {favorites.length}
           </span>
@@ -233,8 +233,8 @@ export default function Home() {
 
       {/* Gallery Content Section */}
       <section className="max-w-7xl mx-auto px-6 py-12">
-        {/* Navigation Area: Back to Gallery button on Favorites, or Album Tabs otherwise */}
-        <nav className="flex justify-center gap-2 flex-wrap mb-10">
+        {/* Navigation Area: Back button on Favorites, or Album Tabs otherwise */}
+        <nav className="flex justify-center gap-2 flex-wrap mb-8">
           {activeTab === 'Favorites' ? (
             <button
               onClick={() => {
@@ -242,9 +242,9 @@ export default function Home() {
                   setActiveTab(data.albums[0]);
                 }
               }}
-              className="px-8 py-2.5 bg-stone-900 text-white text-xs font-light tracking-[0.15em] uppercase rounded-none hover:bg-stone-800 transition shadow-sm"
+              className="px-8 py-2.5 bg-transparent text-stone-900 text-xs font-light tracking-[0.15em] uppercase rounded-none border border-stone-400 hover:bg-stone-100/50 transition shadow-sm"
             >
-              ← Back to Gallery
+              ← Back
             </button>
           ) : (
             data.albums.map((album) => (
@@ -263,15 +263,39 @@ export default function Home() {
           )}
         </nav>
 
+        {/* Dynamic Album Title Header */}
+        {activeTab !== 'Favorites' && (
+          <div className="text-center mb-12 space-y-1">
+            <h2 className="text-2xl md:text-3xl font-light tracking-[0.2em] uppercase text-stone-800">
+              {activeTab}
+            </h2>
+            <p className="text-[11px] tracking-[0.15em] uppercase text-stone-400 font-light">
+              {activeTab} Moments
+            </p>
+          </div>
+        )}
+
+        {/* Favorites Title Header */}
+        {activeTab === 'Favorites' && (
+          <div className="text-center mb-10 space-y-1">
+            <h2 className="text-2xl md:text-3xl font-light tracking-[0.2em] uppercase text-stone-800">
+              Favorites
+            </h2>
+            <p className="text-[11px] tracking-[0.15em] uppercase text-stone-400 font-light">
+              Saved Wedding Memories
+            </p>
+          </div>
+        )}
+
         {/* Download All Favorites Button */}
         {activeTab === 'Favorites' && favorites.length > 0 && (
           <div className="flex justify-center mb-10">
             <button
               onClick={handleDownloadAllFavorites}
               disabled={downloadingFavs}
-              className="px-8 py-3 bg-stone-900 hover:bg-stone-800 text-white text-xs tracking-[0.2em] uppercase font-light rounded-none shadow-sm transition flex items-center gap-3 disabled:opacity-50"
+              className="px-8 py-3 bg-transparent hover:bg-stone-100/50 text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-400 shadow-sm transition flex items-center gap-3 disabled:opacity-50"
             >
-              {downloadingFavs ? 'Packing ZIP File...' : `Download All Favorites (${favorites.length})`}
+              {downloadingFavs ? 'Packing ZIP File...' : `Download All (${favorites.length})`}
             </button>
           </div>
         )}
@@ -305,12 +329,10 @@ export default function Home() {
                     <div className="flex justify-end">
                       <button
                         onClick={(e) => toggleFavorite(photo.id, e)}
-                        className={`p-2.5 rounded-none backdrop-blur-md transition ${
-                          isFav ? 'bg-stone-900 text-red-500' : 'bg-white/90 text-stone-800 hover:bg-white'
-                        }`}
+                        className="w-9 h-9 rounded-full bg-white/90 hover:bg-white text-stone-800 flex items-center justify-center shadow-md backdrop-blur-md transition"
                         title={isFav ? 'Remove from favorites' : 'Add to favorites'}
                       >
-                        ♥
+                        <span className={`text-xs ${isFav ? 'text-red-500' : 'text-stone-700'}`}>♥</span>
                       </button>
                     </div>
                     <div className="flex justify-between items-center text-xs text-white">
