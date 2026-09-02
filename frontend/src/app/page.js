@@ -15,8 +15,8 @@ export default function Home() {
 
   // Map your custom dates for each specific album name here
   const albumDates = {
-    'mehndi night': '9 October 2026',
-    'nikkah': '10 October 2026',
+    'mehndi night': '9 October 2025',
+    'nikkah': '10 October 2025',
     'WEDDING DAY': '18 JULY 2026',
     'wedding eve': '17 JULY 2026',
     
@@ -217,7 +217,9 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen text-stone-900 select-none relative bg-[#FDFBF7]">
+    <main className={`min-h-screen select-none relative transition-colors duration-500 ${
+      activeTab === 'Favorites' ? 'bg-[#F9F1F2] text-stone-900' : 'bg-[#FDFBF7] text-stone-900'
+    }`}>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet" />
@@ -228,14 +230,14 @@ export default function Home() {
           onClick={() => setActiveTab('Favorites')}
           className={`px-5 py-2.5 rounded-none text-[11px] font-light tracking-[0.2em] uppercase transition-all duration-300 flex items-center gap-2.5 backdrop-blur-md shadow-sm border ${
             activeTab === 'Favorites'
-              ? 'bg-transparent text-stone-900 border-stone-400 hover:bg-stone-100/50'
+              ? 'bg-white/60 text-stone-900 border-rose-200 hover:bg-white/80 shadow-rose-100/50'
               : 'bg-stone-900/60 text-white border-white/20 hover:bg-stone-900/80'
           }`}
         >
           <span className="text-xs text-red-500">♥</span>
           <span className="font-normal">Favorites</span>
           <span className={`ml-0.5 px-2 py-0.5 rounded-none text-[10px] tracking-normal ${
-            activeTab === 'Favorites' ? 'bg-stone-200/60 text-stone-800 border border-stone-300' : 'bg-white/20 text-white'
+            activeTab === 'Favorites' ? 'bg-rose-100 text-stone-800 border border-rose-200' : 'bg-white/20 text-white'
           }`}>
             {currentFavoritesList.length}
           </span>
@@ -251,7 +253,7 @@ export default function Home() {
                 setActiveTab(data.albums[0]);
               }
             }}
-            className="px-5 py-2.5 bg-transparent text-stone-900 text-[11px] font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm flex items-center gap-2 backdrop-blur-md bg-stone-100/50"
+            className="px-5 py-2.5 bg-white/60 text-stone-900 text-[11px] font-light tracking-[0.2em] uppercase rounded-none border border-rose-200 hover:bg-white/80 transition-all duration-300 shadow-sm flex items-center gap-2 backdrop-blur-md shadow-rose-100/50"
           >
             <span>←</span> Back
           </button>
@@ -323,16 +325,16 @@ export default function Home() {
 
         {activeTab === 'Favorites' && (
           <div className="text-center mb-12 space-y-3">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-stone-400 font-light">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-rose-400 font-light">
               Curated Collection
             </p>
             <h2 className="text-4xl md:text-5xl font-light tracking-wide text-stone-900" style={{ fontFamily: "'Dancing Script', cursive" }}>
               Your Favorite Moments
             </h2>
-            <div className="flex items-center justify-center gap-4 text-stone-400 text-xs pt-1">
-              <span className="h-[1px] w-8 bg-stone-300"></span>
-              <span className="uppercase tracking-[0.2em] text-[10px] font-light">Saved Memories</span>
-              <span className="h-[1px] w-8 bg-stone-300"></span>
+            <div className="flex items-center justify-center gap-4 text-rose-300 text-xs pt-1">
+              <span className="h-[1px] w-8 bg-rose-200"></span>
+              <span className="uppercase tracking-[0.2em] text-[10px] font-light text-stone-500">Saved Memories</span>
+              <span className="h-[1px] w-8 bg-rose-200"></span>
             </div>
           </div>
         )}
@@ -342,7 +344,7 @@ export default function Home() {
             <button
               onClick={handleDownloadAllFavorites}
               disabled={downloadingFavs}
-              className="px-8 py-3 bg-transparent hover:bg-stone-900/5 text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-stone-300 hover:border-stone-900 shadow-sm transition-all duration-300 flex items-center gap-3 disabled:opacity-50"
+              className="px-8 py-3 bg-white/70 hover:bg-white text-stone-900 text-xs tracking-[0.2em] uppercase font-light rounded-none border border-rose-200 shadow-sm transition-all duration-300 flex items-center gap-3 disabled:opacity-50 backdrop-blur-md"
             >
               {downloadingFavs ? 'Packing ZIP File...' : `Download All (${currentFavoritesList.length})`}
             </button>
@@ -351,7 +353,7 @@ export default function Home() {
 
         {currentPhotos.length === 0 ? (
           <div className="text-center py-24 space-y-4">
-            <span className="text-3xl text-stone-300">♥</span>
+            <span className="text-3xl text-rose-300">♥</span>
             <p className="text-stone-500 font-light text-sm tracking-widest uppercase">
               {activeTab === 'Favorites' ? 'No favorite photos added yet' : 'No photos found in this category.'}
             </p>
@@ -369,7 +371,7 @@ export default function Home() {
                 <div
                   key={photo.id}
                   onClick={() => setSelectedPhotoIndex(index)}
-                  className="group relative cursor-pointer overflow-hidden rounded-none bg-stone-200 aspect-[4/5] shadow-sm hover:shadow-md border border-stone-200 transition-all duration-300"
+                  className="group relative cursor-pointer overflow-hidden rounded-none bg-rose-100/50 aspect-[4/5] shadow-sm hover:shadow-md border border-rose-200/60 transition-all duration-300"
                 >
                   <img
                     src={photo.url}
