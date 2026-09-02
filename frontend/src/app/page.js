@@ -99,7 +99,7 @@ export default function Home() {
     }
   };
 
-  // Completely reliable Client-side ZIP download using JSZip with proper base64 data extraction
+  // Client-side ZIP download using JSZip with fixed crossOrigin properties
   const handleDownloadAllFavorites = async () => {
     const validFavorites = favorites.filter((id) => data.photos.some((p) => p.id === id));
     if (validFavorites.length === 0) return;
@@ -202,7 +202,7 @@ export default function Home() {
   return (
     <main className="min-h-screen text-stone-900 select-none relative bg-[#FDFBF7]">
       <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet" />
 
       {/* Persistent Top Right Floating Favorites Button */}
