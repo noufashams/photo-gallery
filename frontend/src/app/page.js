@@ -371,7 +371,7 @@ export default function Home() {
                 <div
                   key={photo.id}
                   onClick={() => setSelectedPhotoIndex(index)}
-                  className="group relative cursor-pointer overflow-hidden rounded-none bg-rose-100/50 aspect-[4/5] shadow-sm hover:shadow-md border border-rose-200/60 transition-all duration-300"
+                  className="group relative cursor-pointer overflow-hidden rounded-none bg-stone-200 aspect-[4/5] shadow-sm hover:shadow-md border-0 transition-all duration-300"
                 >
                   <img
                     src={photo.url}
