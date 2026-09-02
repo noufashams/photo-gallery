@@ -100,6 +100,7 @@ export default function Home() {
   };
 
   // Robust Client-side ZIP download with guaranteed .jpg extensions
+  // Bulletproof Client-side ZIP download with enforced .jpg extensions
   const handleDownloadAllFavorites = async () => {
     const validFavorites = favorites.filter((id) => data.photos.some((p) => p.id === id));
     if (validFavorites.length === 0) return;
@@ -131,9 +132,12 @@ export default function Home() {
             const response = await fetch(photo.url);
             const blob = await response.blob();
             
-            // Ensure filename always has a proper image extension
-            let rawName = photo.filename || `wedding_photo_${idx + 1}`;
-            const safeFilename = rawName.includes('.') ? rawName : `${rawName}.jpg`;
+            // Clean filename and guarantee a .jpg extension
+            let baseName = photo.filename || photo.id.split('/').pop() || `wedding_photo_${idx + 1}`;
+            if (baseName.includes('.')) {
+              baseName = baseName.substring(0, baseName.lastIndexOf('.'));
+            }
+            const safeFilename = `${baseName}.jpg`;
 
             zip.file(safeFilename, blob);
           } catch (err) {
@@ -158,7 +162,6 @@ export default function Home() {
       setDownloadingFavs(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#FDFBF7] text-stone-800">
