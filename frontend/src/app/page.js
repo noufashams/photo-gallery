@@ -168,6 +168,10 @@ export default function Home() {
     }
   };
 
+  // Find a background image for the Favorites page (uses the first favorite or falls back to cover-bg)
+  const favoritePhotosList = data.photos.filter((p) => favorites.includes(p.id));
+  const favoritesBgUrl = favoritePhotosList.length > 0 ? favoritePhotosList[0].url : '/cover-bg.jpg';
+
   return (
     <main className="min-h-screen bg-[#FDFBF7] text-stone-900 select-none relative">
       {/* Google Fonts Import for Aesthetic Script */}
@@ -231,6 +235,36 @@ export default function Home() {
         </section>
       )}
 
+      {/* Blurred Background Header / Banner for Favorites Tab */}
+      {activeTab === 'Favorites' && (
+        <section className="relative min-h-[35vh] flex flex-col justify-center items-center text-center px-6 border-b border-stone-200/60 overflow-hidden">
+          {/* Blurred Background Image & Gradient Overlay */}
+          <div className="absolute inset-0 z-0 overflow-hidden">
+            <img
+              src={favoritesBgUrl}
+              alt="Favorites Background"
+              className="w-full h-full object-cover object-center filter blur-xl scale-110 opacity-60"
+            />
+            <div className="absolute inset-0 bg-[#FDFBF7]/75 backdrop-blur-md"></div>
+          </div>
+
+          {/* Favorites Header Content */}
+          <div className="relative z-10 max-w-4xl space-y-3 pt-6">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 font-light">
+              Curated Collection
+            </p>
+            <h2 className="text-4xl md:text-6xl font-light tracking-wide text-stone-900" style={{ fontFamily: "'Dancing Script', cursive" }}>
+              Your Favorite Moments
+            </h2>
+            <div className="flex items-center justify-center gap-4 text-stone-500 text-xs pt-1">
+              <span className="h-[1px] w-8 bg-stone-300"></span>
+              <span className="uppercase tracking-[0.2em] text-[10px] font-light">Saved Memories</span>
+              <span className="h-[1px] w-8 bg-stone-300"></span>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Gallery Content Section */}
       <section className="max-w-7xl mx-auto px-6 py-12">
         {/* Navigation Area: Left-aligned Back button on Favorites, or Centered Album Tabs otherwise */}
@@ -272,23 +306,6 @@ export default function Home() {
             <p className="text-[11px] tracking-[0.15em] uppercase text-stone-400 font-light">
               {activeTab} Moments
             </p>
-          </div>
-        )}
-
-        {/* Aesthetic Favorites Title Header */}
-        {activeTab === 'Favorites' && (
-          <div className="text-center mb-12 space-y-3">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-stone-400 font-light">
-              Curated Collection
-            </p>
-            <h2 className="text-4xl md:text-5xl font-light tracking-wide text-stone-900" style={{ fontFamily: "'Dancing Script', cursive" }}>
-              Your Favorite Moments
-            </h2>
-            <div className="flex items-center justify-center gap-4 text-stone-400 text-xs pt-1">
-              <span className="h-[1px] w-8 bg-stone-300"></span>
-              <span className="uppercase tracking-[0.2em] text-[10px] font-light">Saved Memories</span>
-              <span className="h-[1px] w-8 bg-stone-300"></span>
-            </div>
           </div>
         )}
 
