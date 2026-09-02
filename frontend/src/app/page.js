@@ -233,8 +233,8 @@ export default function Home() {
 
       {/* Gallery Content Section */}
       <section className="max-w-7xl mx-auto px-6 py-12">
-        {/* Navigation Area: Back button on Favorites, or Album Tabs otherwise */}
-        <nav className="flex justify-center gap-2 flex-wrap mb-8">
+        {/* Navigation Area: Left-aligned Back button on Favorites, or Centered Album Tabs otherwise */}
+        <nav className={`flex ${activeTab === 'Favorites' ? 'justify-start' : 'justify-center'} gap-2 flex-wrap mb-8`}>
           {activeTab === 'Favorites' ? (
             <button
               onClick={() => {
@@ -242,9 +242,9 @@ export default function Home() {
                   setActiveTab(data.albums[0]);
                 }
               }}
-              className="px-8 py-2.5 bg-transparent text-stone-900 text-xs font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm"
+              className="px-6 py-2.5 bg-transparent text-stone-900 text-xs font-light tracking-[0.2em] uppercase rounded-none border border-stone-300 hover:border-stone-900 transition-all duration-300 shadow-sm flex items-center gap-2"
             >
-              Back
+              <span>←</span> Back
             </button>
           ) : (
             data.albums.map((album) => (
