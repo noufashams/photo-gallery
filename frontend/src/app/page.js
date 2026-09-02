@@ -16,7 +16,7 @@ export default function Home() {
   // Map your custom dates for each specific album name here
   const albumDates = {
     'mehndi night': '9 October 2026',
-    'nikkah': '9 October 2026',
+    'nikkah': '10 October 2026',
     'WEDDING DAY': '18 JULY 2026',
     'wedding eve': '17 JULY 2026',
     
