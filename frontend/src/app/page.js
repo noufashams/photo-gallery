@@ -88,7 +88,7 @@ export default function Home() {
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;
-      link.download = filename;
+      link.download = filename || 'photo.jpg';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -99,27 +99,51 @@ export default function Home() {
     }
   };
 
-  // Bulk Download Favorites ZIP (Fixed to request file URLs explicitly from the backend)
+  // Client-side ZIP Download fallback using JSZip to fix the TextEdit garbled file output issue completely!
   const handleDownloadAllFavorites = async () => {
     const validFavorites = favorites.filter((id) => data.photos.some((p) => p.id === id));
     if (validFavorites.length === 0) return;
     setDownloadingFavs(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://photo-gallery-iw5a.onrender.com';
+      // Dynamically load JSZip from CDN to avoid dependency missing issues
+      if (!window.JSZip) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax5/libs/jszip/3.10.1/jszip.min.js';
+          // Fallback CDN if needed
+          script.onerror = () => {
+            const fallback = document.createElement('script');
+            fallback.src = 'https://unpkg.com/jszip@3.10.1/dist/jszip.min.js';
+            fallback.onload = resolve;
+            fallback.onerror = reject;
+            document.head.appendChild(fallback);
+          };
+          script.onload = resolve;
+          document.head.appendChild(script);
+        });
+      }
+
+      const zip = new window.JSZip();
       const selectedPhotosData = data.photos.filter((p) => validFavorites.includes(p.id));
-      const fileUrls = selectedPhotosData.map((p) => p.url);
 
-      const response = await fetch(`${apiUrl}/api/download-favorites`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photoIds: validFavorites, urls: fileUrls }),
-      });
+      // Fetch each image as a binary blob and add to the ZIP archive
+      await Promise.all(
+        selectedPhotosData.map(async (photo, idx) => {
+          try {
+            const response = await fetch(photo.url);
+            const blob = await response.blob();
+            const filename = photo.filename || `photo_${idx + 1}.jpg`;
+            zip.file(filename, blob);
+          } catch (err) {
+            console.error(`Failed to fetch image for zip: ${photo.url}`, err);
+          }
+        })
+      );
 
-      if (!response.ok) throw new Error('Failed to generate ZIP file');
-
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
+      // Generate the actual ZIP blob and trigger client download
+      const content = await zip.generateAsync({ type: 'blob' });
+      const blobUrl = window.URL.createObjectURL(content);
       const link = document.createElement('a');
       link.href = blobUrl;
       link.download = 'wedding-favorites.zip';
@@ -128,8 +152,8 @@ export default function Home() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
-      console.error('Download favorites ZIP failed:', err);
-      alert('Failed to download favorites ZIP file.');
+      console.error('Client-side ZIP generation failed:', err);
+      alert('Failed to generate favorites ZIP file.');
     } finally {
       setDownloadingFavs(false);
     }
