@@ -17,25 +17,23 @@ const MAX_BYTES = 9 * 1024 * 1024;
 async function checkIfExists(publicId) {
   try {
     await cloudinary.api.resource(publicId);
-    return true; // Asset exists in Cloudinary
+    return true; 
   } catch (error) {
-    return false; // Asset does not exist
+    return false; 
   }
 }
 
 async function uploadFile(filePath, albumName) {
   const fileName = path.basename(filePath);
-  const fileKey = path.parse(fileName).name; // Remove extension for Public ID
+  const fileKey = path.parse(fileName).name; 
   const publicId = `wedding-gallery/${albumName}/${fileKey}`;
 
-  // 1. Skip if file is already uploaded to Cloudinary
   const exists = await checkIfExists(publicId);
   if (exists) {
     console.log(`⏩ Skipped (Already Uploaded): [${albumName}] ${fileName}`);
     return;
   }
 
-  // 2. Upload new file if missing
   let uploadTarget = filePath;
   let tempFilePath = null;
 
@@ -75,9 +73,20 @@ async function bulkUpload() {
     return;
   }
 
-  const albums = fs.readdirSync(PHOTOS_DIR).filter((f) =>
+  // Check if a specific album name was passed via terminal argument
+  const targetAlbumArg = process.argv[2];
+
+  let albums = fs.readdirSync(PHOTOS_DIR).filter((f) =>
     fs.statSync(path.join(PHOTOS_DIR, f)).isDirectory()
   );
+
+  if (targetAlbumArg) {
+    if (!albums.includes(targetAlbumArg)) {
+      console.error(`✕ Error: Album folder "${targetAlbumArg}" not found inside local-photos directory.`);
+      return;
+    }
+    albums = [targetAlbumArg]; // Restrict list to only the specified album
+  }
 
   for (const album of albums) {
     const albumPath = path.join(PHOTOS_DIR, album);
@@ -95,7 +104,7 @@ async function bulkUpload() {
     }
   }
 
-  console.log('\n🎉 Bulk Upload Completed Successfully!');
+  console.log('\n🎉 Upload Completed Successfully!');
 }
 
 bulkUpload();
