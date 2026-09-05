@@ -1,10 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-export const metadata = {
-  title: "Yaseen & Nada",
-  description: "Wedding gallery and celebration",
-};
 
 export default function Home() {
   const [data, setData] = useState({ albums: [], photos: [] });
